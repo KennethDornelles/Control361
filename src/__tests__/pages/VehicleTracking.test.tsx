@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act } from 'react'
 import VehicleTracking from '../../pages/VehicleTracking'
 import { VehicleService } from '../../services/vehicle.service'
 import type { IVehicle } from '../../types/vehicle.types'
@@ -36,16 +37,20 @@ const mockVehicles: IVehicle[] = [
 describe('VehicleTracking', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(VehicleService.getVehicles as jest.Mock).mockResolvedValue(mockVehicles)
+      ; (VehicleService.getVehicles as jest.Mock).mockResolvedValue(mockVehicles)
   })
 
   test('deve renderizar o título da página', async () => {
-    render(<VehicleTracking />)
+    await act(async () => {
+      render(<VehicleTracking />)
+    })
     expect(screen.getByText('Kenneth Dornelles')).toBeInTheDocument()
   })
 
   test('deve buscar e exibir veículos ao carregar', async () => {
-    render(<VehicleTracking />)
+    await act(async () => {
+      render(<VehicleTracking />)
+    })
 
     expect(VehicleService.getVehicles).toHaveBeenCalled()
 
@@ -57,8 +62,10 @@ describe('VehicleTracking', () => {
     })
   })
 
-  test('deve alternar entre abas', () => {
-    render(<VehicleTracking />)
+  test('deve alternar entre abas', async () => {
+    await act(async () => {
+      render(<VehicleTracking />)
+    })
 
     const mapaTab = screen.getByText('Mapa rastreador')
     const listaTab = screen.getByText('Lista')
@@ -66,37 +73,47 @@ describe('VehicleTracking', () => {
     expect(mapaTab).toHaveClass('text-[#8257E5]')
     expect(listaTab).not.toHaveClass('text-[#8257E5]')
 
-    fireEvent.click(listaTab)
+    await act(async () => {
+      fireEvent.click(listaTab)
+    })
 
     expect(listaTab).toHaveClass('text-[#8257E5]')
     expect(mapaTab).not.toHaveClass('text-[#8257E5]')
 
-    fireEvent.click(mapaTab)
+    await act(async () => {
+      fireEvent.click(mapaTab)
+    })
 
     expect(mapaTab).toHaveClass('text-[#8257E5]')
     expect(listaTab).not.toHaveClass('text-[#8257E5]')
   })
 
   test('deve selecionar um veículo ao clicar nele', async () => {
-    render(<VehicleTracking />)
+    await act(async () => {
+      render(<VehicleTracking />)
+    })
 
     await waitFor(() => {
       expect(screen.getByText('ABC-1234')).toBeInTheDocument()
     })
 
-    fireEvent.click(screen.getByText('ABC-1234').closest('tr')!)
+    await act(async () => {
+      fireEvent.click(screen.getByText('ABC-1234').closest('tr')!)
+    })
 
-    expect(screen.getByText('ABC-1234').closest('tr')).toHaveClass(
+    expect(screen.getByText('ABC-1234').closest('tr')!.className).toContain(
       'bg-[#29292E]'
     )
   })
 
   test('deve mostrar mensagem de erro quando a API falha', async () => {
-    ;(VehicleService.getVehicles as jest.Mock).mockRejectedValueOnce(
+    ; (VehicleService.getVehicles as jest.Mock).mockRejectedValueOnce(
       new Error('API Error')
     )
 
-    render(<VehicleTracking />)
+    await act(async () => {
+      render(<VehicleTracking />)
+    })
 
     await waitFor(() => {
       expect(
@@ -108,7 +125,9 @@ describe('VehicleTracking', () => {
   })
 
   test('deve filtrar veículos ao digitar no campo de busca', async () => {
-    render(<VehicleTracking />)
+    await act(async () => {
+      render(<VehicleTracking />)
+    })
 
     await waitFor(() => {
       expect(screen.getByText('ABC-1234')).toBeInTheDocument()
@@ -117,7 +136,9 @@ describe('VehicleTracking', () => {
 
     const searchInput = screen.getByPlaceholderText('Buscar placa ou frota')
 
-    fireEvent.change(searchInput, { target: { value: 'ABC' } })
+    await act(async () => {
+      fireEvent.change(searchInput, { target: { value: 'ABC' } })
+    })
 
     // Implemente aqui a verificação do filtro quando for adicionado na aplicação
     // Por exemplo:

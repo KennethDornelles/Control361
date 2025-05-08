@@ -84,11 +84,12 @@ describe('VehicleList Component', () => {
       />
     )
 
-    fireEvent.click(screen.getByText('ABC1234').closest('li')!)
-    expect(onVehicleSelectMock).toHaveBeenCalledWith(mockVehicles[0])
+    const buttons = screen.getAllByRole('button');
+    fireEvent.click(buttons[0]); // Primeiro botão (ABC1234)
+    expect(onVehicleSelectMock).toHaveBeenCalledWith(mockVehicles[0]);
 
-    fireEvent.click(screen.getByText('DEF5678').closest('li')!)
-    expect(onVehicleSelectMock).toHaveBeenCalledWith(mockVehicles[1])
+    fireEvent.click(buttons[1]); // Segundo botão (DEF5678)
+    expect(onVehicleSelectMock).toHaveBeenCalledWith(mockVehicles[1]);
   })
 
   test('highlights the selected vehicle', () => {
