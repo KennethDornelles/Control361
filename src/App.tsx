@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import VehicleTracking from './pages/VehicleTracking';
-import './App.css';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import VehicleTracking from './pages/VehicleTracking'
+import './App.css'
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
         <Route path="/" element={<VehicleTracking />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App
