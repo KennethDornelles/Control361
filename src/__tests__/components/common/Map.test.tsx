@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { Map } from '../../../components/common/Map'
+import { VehicleMap } from '../../../components/common/Map'
 import type { IVehicle } from '../../../types/vehicle.types'
 import { VehicleStatus, VehicleType } from '../../../types/vehicle.types'
 
@@ -68,7 +68,7 @@ describe('Map Component', () => {
   })
 
   test('renders map container element', () => {
-    render(<Map vehicles={mockVehicles} />)
+    render(<VehicleMap vehicles={mockVehicles} />)
     const mapContainer = document.querySelector('.map-container')
     expect(mapContainer).toBeInTheDocument()
   })
@@ -81,7 +81,7 @@ describe('Map Component', () => {
     jest.resetModules()
     jest.doMock('leaflet', () => undefined)
 
-    render(<Map vehicles={mockVehicles} />)
+    render(<VehicleMap vehicles={mockVehicles} />)
 
     expect(
       screen.getByText('Não foi possível carregar o mapa')
@@ -99,21 +99,24 @@ describe('Map Component', () => {
     const onVehicleClickMock = jest.fn()
 
     const { rerender } = render(
-      <Map vehicles={mockVehicles} onVehicleClick={onVehicleClickMock} />
+      <VehicleMap vehicles={mockVehicles} onVehicleClick={onVehicleClickMock} />
     )
 
     const L = require('leaflet')
     const markerInstance = L.marker.mock.results[0].value
 
     const clickCallback = markerInstance.on.mock.calls.find(
-      (call: any[]) => call[0] === 'click'
+      (call: [string, () => void]) => call[0] === 'click'
     )[1]
     clickCallback()
 
     expect(onVehicleClickMock).toHaveBeenCalledWith(mockVehicles[0])
 
     rerender(
-      <Map vehicles={[mockVehicles[1]]} onVehicleClick={onVehicleClickMock} />
+      <VehicleMap
+        vehicles={[mockVehicles[1]]}
+        onVehicleClick={onVehicleClickMock}
+      />
     )
   })
 })

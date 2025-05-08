@@ -27,7 +27,7 @@ const statusColors = {
   [VehicleStatus.MOVIMENTO]: '#00875F',
 }
 
-export const Map: React.FC<MapProps> = ({
+export const VehicleMap: React.FC<MapProps> = ({
   vehicles,
   center = { lat: -15.7801, lng: -47.9292 },
   zoom = 5,
@@ -81,7 +81,7 @@ export const Map: React.FC<MapProps> = ({
 
     const currentVehicleIds = new Set<string>()
 
-    vehicles.forEach(vehicle => {
+    for (const vehicle of vehicles) {
       const vehicleId = vehicle.id.toString()
       currentVehicleIds.add(vehicleId)
 
@@ -131,14 +131,14 @@ export const Map: React.FC<MapProps> = ({
           markersRef.current[vehicleId] = marker
         }
       }
-    })
+    }
 
-    Object.keys(markersRef.current).forEach(id => {
+    for (const id of Object.keys(markersRef.current)) {
       if (!currentVehicleIds.has(id) && mapRef.current) {
         mapRef.current.removeLayer(markersRef.current[id])
         delete markersRef.current[id]
       }
-    })
+    }
   }, [vehicles])
 
   const handleMarkerClick = (vehicle: IVehicle) => {
@@ -287,11 +287,17 @@ export const Map: React.FC<MapProps> = ({
                     {vehicles.map(vehicle => (
                       <tr
                         key={vehicle.id}
-                        onClick={() => handleMarkerClick(vehicle)}
                         className="hover:bg-[#29292E] cursor-pointer"
                       >
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-[#E1E1E6]">
-                          {vehicle.placa}
+                          <button
+                            type="button"
+                            onClick={() => handleMarkerClick(vehicle)}
+                            className="bg-transparent text-[#E1E1E6] w-full text-left hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8257E5] rounded px-1"
+                            aria-label={`Selecionar veículo ${vehicle.placa}`}
+                          >
+                            {vehicle.placa}
+                          </button>
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-[#E1E1E6]">
                           {vehicle.modelo}

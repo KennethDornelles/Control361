@@ -124,22 +124,20 @@ export const VehicleService = {
       // Endpoint direto do Swagger para listar veículos
       const response = await apiClient.get('/vehicles/list-with-paginate')
 
-      if (
-        response.data &&
-        response.data.items &&
-        Array.isArray(response.data.items)
-      ) {
+      if (response.data?.items && Array.isArray(response.data.items)) {
         console.log(`Recebidos ${response.data.items.length} veículos da API`)
         return response.data.items
-      } else if (Array.isArray(response.data)) {
+      }
+
+      if (Array.isArray(response.data)) {
         console.log(`Recebidos ${response.data.length} veículos da API`)
         return response.data
-      } else {
-        console.warn(
-          'Formato de resposta não reconhecido. Usando dados de exemplo.'
-        )
-        return mockVehicles
       }
+
+      console.warn(
+        'Formato de resposta não reconhecido. Usando dados de exemplo.'
+      )
+      return mockVehicles
     } catch (error) {
       console.error('Erro ao buscar veículos:', error)
       console.warn('Usando dados de exemplo para veículos.')

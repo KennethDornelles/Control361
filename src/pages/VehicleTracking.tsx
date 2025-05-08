@@ -1,6 +1,6 @@
 import type React from 'react'
-import { useEffect, useState } from 'react'
-import { Map } from '../components/common/Map'
+import { useCallback, useEffect, useState } from 'react'
+import { VehicleMap } from '../components/common/Map'
 import { VehicleService } from '../services/vehicle.service'
 import type { IVehicle } from '../types/vehicle.types'
 
@@ -12,7 +12,7 @@ const VehicleTracking: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'mapa' | 'lista'>('mapa')
   const [searchText, setSearchText] = useState('')
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     try {
       const data = await VehicleService.getVehicles()
       setVehicles(data)
@@ -23,7 +23,7 @@ const VehicleTracking: React.FC = () => {
         'Não foi possível carregar os veículos. Por favor, tente novamente.'
       )
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchVehicles()
@@ -36,7 +36,7 @@ const VehicleTracking: React.FC = () => {
     )
 
     return () => clearInterval(interval)
-  }, [])
+  }, [fetchVehicles])
 
   const handleVehicleSelect = (vehicle: IVehicle) => {
     setSelectedVehicle(vehicle)
@@ -56,7 +56,10 @@ const VehicleTracking: React.FC = () => {
             onChange={e => setSearchText(e.target.value)}
             className="bg-[#121214] border border-[#29292E] rounded-md px-4 py-2 h-10 text-sm w-64 focus:outline-none focus:border-[#8257E5]"
           />
-          <button className="bg-[#00B37E] text-white font-medium px-6 py-2 h-10 rounded-md hover:bg-[#00875F] transition-colors">
+          <button
+            type="button"
+            className="bg-[#00B37E] text-white font-medium px-6 py-2 h-10 rounded-md hover:bg-[#00875F] transition-colors"
+          >
             Novo
           </button>
         </div>
@@ -66,6 +69,7 @@ const VehicleTracking: React.FC = () => {
         <div className="mb-6 border-b border-[#29292E]">
           <div className="flex space-x-8">
             <button
+              type="button"
               className={`px-1 py-4 font-medium text-base ${
                 activeTab === 'mapa'
                   ? 'text-[#8257E5] border-b-2 border-[#8257E5] -mb-px'
@@ -76,6 +80,7 @@ const VehicleTracking: React.FC = () => {
               Mapa rastreador
             </button>
             <button
+              type="button"
               className={`px-1 py-4 font-medium text-base ${
                 activeTab === 'lista'
                   ? 'text-[#8257E5] border-b-2 border-[#8257E5] -mb-px'
@@ -98,7 +103,7 @@ const VehicleTracking: React.FC = () => {
         )}
 
         <div className="mb-8">
-          <Map
+          <VehicleMap
             vehicles={vehicles}
             center={mapCenter}
             zoom={selectedVehicle ? 15 : 5}
@@ -135,10 +140,16 @@ const VehicleTracking: React.FC = () => {
                     <tr
                       key={vehicle.id}
                       className={`hover:bg-[#29292E] transition-colors ${selectedVehicle?.id === vehicle.id ? 'bg-[#29292E]' : ''}`}
-                      onClick={() => handleVehicleSelect(vehicle)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-[#E1E1E6]">
-                        {vehicle.placa}
+                        <button
+                          type="button"
+                          onClick={() => handleVehicleSelect(vehicle)}
+                          className="bg-transparent text-[#E1E1E6] w-full text-left hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8257E5] rounded px-1"
+                          aria-label={`Selecionar veículo ${vehicle.placa}`}
+                        >
+                          {vehicle.placa}
+                        </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-[#E1E1E6]">
                         {vehicle.id}
